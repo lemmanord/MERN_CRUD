@@ -1,4 +1,8 @@
-import { CreateTodo, EditTodo, TodoList } from 'components';
+import TodoList from 'components/TodoList';
+import EditTodo from 'components/EditTodo';
+import CreateTodo from 'components/CreateTodo';
+
+import { Switch, Link, Route } from 'react-router-dom';
 import './App.css';
 
 function App() {
