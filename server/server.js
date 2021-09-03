@@ -5,7 +5,7 @@ const PORT = 4000;
 const mongoose = require('mongoose');
 const Todo = require('./models/todo');
 // import dotenv from 'dotenv';
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
 dotenv.config();
 
 const { DB_URI } = process.env;
@@ -13,9 +13,7 @@ mongoose.connect(DB_URI, {
   useNewUrlParser: true,
 });
 
-console.log(process.env.DB_URI);
-
-mongoose.connection.once('once', () => {
+mongoose.connection.once('open', () => {
   console.log('Mongodb connecton established successfully');
 });
 
@@ -27,13 +25,14 @@ app.get('/', (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.json(todos);
+      res.json(todo);
     }
   });
 });
 
 app.post('/create', (req, res) => {
   const todo = new Todo(req.body);
+  console.log(req.body);
   todo
     .save()
     .then((todo) => {
@@ -48,6 +47,23 @@ app.get('/:id', (req, res) => {
   const id = req.params.id;
   Todo.findById(id, (err, todo) => {
     res.json(todo);
+  });
+});
+
+app.post('/:id', (req, res) => {
+  const id = req.params.id;
+  Todo.findById(id, (err, todo) => {
+    if (!todo) {
+      res.status(404).send('Todo not found');
+    } else {
+      todo.text = req.body.text;
+      todo
+        .save()
+        .then((todo) => {
+          res.json(todo);
+        })
+        .catch((err) => res.status(500).send(err.message));
+    }
   });
 });
 
